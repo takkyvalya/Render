@@ -23,19 +23,19 @@ public class Main extends JFrame {
         //Render.render(img);
         int A=400;
         int B=300;
-        int R=50;
-        for (int i=1;i<1;i++){
-            int x=(int)(A + R*Math.cos((Math.PI / 6) * i));
-            int y=(int)(B + R * Math.sin((Math.PI / 6 )* i));
-            System.out.println(x + " " + y);
-            //Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
+        int R=100;
+        for (int i=1;i<17;i++){
+            int x=(int)(A + R*Math.cos((Math.PI / 8) * i));
+            int y=(int)(B + R * Math.sin((Math.PI / 8 )* i));
+            //System.out.println(x + " " + y);
+            Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
         }
-        Render.renderLine(img,400,300 ,443,325,new Color(30,30,30));
-        Render.renderLine(img,400,300 ,425,343,new Color(30,30,30));
-        Render.renderLine(img,400,300 ,400,350,new Color(30,30,30));
-        Render.renderLine(img,400,300 ,375,343,new Color(30,30,30));
-        Render.renderLine(img,400,300 ,356,325,new Color(30,30,30));
-        Render.renderLine(img,400,300 ,350,300,new Color(30,30,30));
+        //Render.renderLine(img,400,300 ,443,325,new Color(30,30,30));
+        //Render.renderLine(img,400,300 ,425,340,new Color(30,30,30));
+        //Render.renderLine(img,400,300 ,400,350,new Color(30,30,30));
+        //Render.renderLine(img,400,300 ,375,343,new Color(30,30,30));
+        //Render.renderLine(img,400,300 ,356,325,new Color(30,30,30));
+        //Render.renderLine(img,400,300 ,350,300,new Color(30,30,30));
         //Render.renderLine(img,70,200,700,300,new Color(30,30,30));
         g.drawImage(img, 0, 0, null);
     }

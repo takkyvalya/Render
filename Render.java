@@ -35,6 +35,7 @@ public class Render {
                     y = y + sy;
                 }
                 x = x - sx;
+                //System.out.println(x + " " + y + "first");
                 img.setRGB(x, y, color.getRGB());
             }
         } else {
@@ -42,9 +43,10 @@ public class Render {
                 f = f + (x1 - x2) * sx;
                 if (f > 0) {
                     f = f - (y2 - y1) * sy;
-                    x = x + sx;
+                    x = x - sx;
                 }
-                y = y - sy;
+                y = y + sy;
+                //System.out.println(x+" "+y);
                 img.setRGB(x, y, color.getRGB());
             }
         }
@@ -58,7 +60,6 @@ public class Render {
         img.setRGB(x2, y2, color.getRGB());
         if (x1 < x2) {
             float y = y1;
-
             for (int x = x1; x < x2; x++) {
                 img.setRGB(x, (int) y, color.getRGB());
                 y = (((float) y2 - (float) y1) / ((float) x2 - (float) x1)) * ((float) x - (float) x1) + y1;
@@ -72,8 +73,8 @@ public class Render {
         } else {
             for (int y = y1; y <= y2; y++) {
                 img.setRGB(x1, y, color.getRGB());
-
             }
         }
     }
 }
+  */

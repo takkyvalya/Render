@@ -1,22 +1,29 @@
 package com.valya;
 
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Render {
 
     public static void render(BufferedImage img) {
-// img.setRGB(500, 300, new Color(255, 0, 200).getRGB());
-        for (int i = 0; i < img.getWidth(); i++) {
-            for (int j = 0; j < img.getHeight(); j++) {
-                img.setRGB(i, j, new Color(i * j % 256, (i + j) % 256, (i * i + j * j) % 256).getRGB());
-            }
+        double A=400;
+        double B=300;
+        double R=100;
+        for (double i=0;i<16;i++){
+            double x=(A + R * Math.cos((Math.PI / 8) * i));
+            double y=(B + R * Math.sin((Math.PI / 8 )* i));
+            double x2=(A + R * Math.cos((Math.PI / 8) * (i+1)) );
+            double y2=(B + R * Math.sin((Math.PI / 8 )* (i+1) ));
+            //System.out.println(x + " " + y);
+            Render.renderColorTriangle(img, A,B, x,y,x2,y2, new Color((int)i*10,0,0));
+            //Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
+            //Render.renderLine(img,A,B ,x2,y2,new Color(30,30,30));
         }
     }
-    
     public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3){
-        for (double i = Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
-            for (double j = Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
+        for (int i = (int) Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
+            for (int j = (int) Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
                 //Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
                 double alpha= ((i-x1) * (y3-y1) - (x3-x1)* (j-y1)) /  ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
                 double beta=(double) ((x2-x1) * (j-y1) - (y2-y1) * (i-x1)) / ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
@@ -26,21 +33,19 @@ public class Render {
             }
         }
     }
-    
-   public static void renderColorTriangle(BufferedImage img, int x1, int y1, int x2, int y2, int x3,  int y3, Color color){
-        for (int i = Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
-            for (int j = Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
-                Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
-                double alpha=(double) ((i-x1) * (y3-y1) - (x3-x1)* (j-y1)) / (double) ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
-                double beta=(double) ((x2-x1) * (j-y1) - (y2-y1) * (i-x1)) / (double) ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
+    public static void renderColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3, Color color){
+        for (int i = (int) Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
+            for (int j = (int) Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
+                //Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
+                double alpha= ((i-x1) * (y3-y1) - (x3-x1)* (j-y1)) /  ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
+                double beta=(double) ((x2-x1) * (j-y1) - (y2-y1) * (i-x1)) / ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
                 if(alpha>=0 && beta>=0 && beta+alpha<=1){
-                    img.setRGB(i,j,color.getRGB());
+                    img.setRGB((int)i,(int) j,color.getRGB());
                 }
             }
         }
-       
-
     }
+
 
     public static void renderTriangle(BufferedImage img, int x1, int y1, int x2, int y2, int x3,  int y3, Color color, Color color2){
         for (int i = Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
@@ -59,7 +64,7 @@ public class Render {
     }
 
 
-    
+
 
     public static void renderLine(BufferedImage img, int x1, int y1, int x2, int y2, Color color) {
         img.setRGB(x1,y1,color.getRGB());
@@ -99,29 +104,3 @@ public class Render {
         }
     }
 }
-
-
- /*//Стоит начать с этого
-    public static void renderLine(BufferedImage img, int x1, int y1, int x2, int y2, Color color) {
-        img.setRGB(x1, y1, color.getRGB());
-        img.setRGB(x2, y2, color.getRGB());
-        if (x1 < x2) {
-            float y = y1;
-            for (int x = x1; x < x2; x++) {
-                img.setRGB(x, (int) y, color.getRGB());
-                y = (((float) y2 - (float) y1) / ((float) x2 - (float) x1)) * ((float) x - (float) x1) + y1;
-            }
-        } else if (x1 < x2) {
-            float y = y1;
-            for (int x = x2; x < x1; x++) {
-                img.setRGB(x, (int) y, color.getRGB());
-                y = (((float) y2 - (float) y1) / ((float) x2 - (float) x1)) * ((float) x - (float) x1) + y1;
-            }
-        } else {
-            for (int y = y1; y <= y2; y++) {
-                img.setRGB(x1, y, color.getRGB());
-            }
-        }
-    }
-}
-  */

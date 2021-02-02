@@ -47,6 +47,9 @@ public class Main extends JFrame {
             //Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
             //Render.renderLine(img,A,B ,x2,y2,new Color(30,30,30));
         }
+        //Рисует треугольник с градиентом
+        //Render.renderGrColorTriangle(img,130,145,564,470,452,155);
+
         
         g.drawImage(img, 0, 0, null);
     }

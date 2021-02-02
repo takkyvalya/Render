@@ -7,19 +7,35 @@ import java.awt.image.BufferedImage;
 public class Render {
 
     public static void render(BufferedImage img) {
+         // Рисуется снежинка
+        /*
+        int A=400;
+        int B=300;
+        int R=100;
+        for (int i=1;i<17;i++){
+            int x=(int)(A + R*Math.cos((Math.PI / 8) * i));
+            int y=(int)(B + R * Math.sin((Math.PI / 8 )* i));
+            //System.out.println(x + " " + y);
+            Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
+        }
+        */
+        //Рисуется многоугльник
         double A=400;
         double B=300;
         double R=100;
-        for (double i=0;i<16;i++){
-            double x=(A + R * Math.cos((Math.PI / 8) * i));
-            double y=(B + R * Math.sin((Math.PI / 8 )* i));
-            double x2=(A + R * Math.cos((Math.PI / 8) * (i+1)) );
-            double y2=(B + R * Math.sin((Math.PI / 8 )* (i+1) ));
+        for (double i=1;i<13;i++){
+            double x=(A + R * Math.cos((Math.PI / 6) * i));
+            double y=(B + R * Math.sin((Math.PI / 6 )* i));
+            double x2=(A + R * Math.cos((Math.PI / 6) * (i+1)) );
+            double y2=(B + R * Math.sin((Math.PI / 6 )* (i+1) ));
             //System.out.println(x + " " + y);
-            Render.renderColorTriangle(img, A,B, x,y,x2,y2, new Color((int)i*10,0,0));
+            Render.renderColorTriangle(img, A,B, x,y,x2,y2, new Color((int)i*20,0,0));
             //Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
             //Render.renderLine(img,A,B ,x2,y2,new Color(30,30,30));
         }
+        //Рисует треугольник с градиентом
+        //Render.renderGrColorTriangle(img,130,145,564,470,452,155);
+
     }
     public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3){
         for (int i = (int) Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {

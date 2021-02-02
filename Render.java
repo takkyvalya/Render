@@ -13,26 +13,32 @@ public class Render {
             }
         }
     }
-   public static void renderColorTriangle(BufferedImage img, int x1, int y1, int x2, int y2, int x3,  int y3){
+    
+    public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3){
+        for (double i = Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
+            for (double j = Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
+                //Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
+                double alpha= ((i-x1) * (y3-y1) - (x3-x1)* (j-y1)) /  ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
+                double beta=(double) ((x2-x1) * (j-y1) - (y2-y1) * (i-x1)) / ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
+                if(alpha>=0 && beta>=0 && beta+alpha<=1){
+                    img.setRGB((int)i,(int) j,(new Color((int)(alpha*255),(int)(beta*255),(int)((1 - beta - alpha)*255))).getRGB());
+                }
+            }
+        }
+    }
+    
+   public static void renderColorTriangle(BufferedImage img, int x1, int y1, int x2, int y2, int x3,  int y3, Color color){
         for (int i = Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
             for (int j = Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
                 Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
                 double alpha=(double) ((i-x1) * (y3-y1) - (x3-x1)* (j-y1)) / (double) ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
                 double beta=(double) ((x2-x1) * (j-y1) - (y2-y1) * (i-x1)) / (double) ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
                 if(alpha>=0 && beta>=0 && beta+alpha<=1){
-                    //img.setRGB(i,j,r.getRGB());
+                    img.setRGB(i,j,color.getRGB());
                 }
             }
         }
-        for (int i =100; i <= 200; i++) {
-            for (int j = 100; j <= 200 ; j++) {
-                Color r=new Color(255-i,255-j, 0);
-                img.setRGB(i,j,r.getRGB());
-            }
-        }
-        img.setRGB(x1, y1, (new Color(255,0,0)).getRGB());
-        img.setRGB(x2, y2, (new Color(0,255,0)).getRGB());
-        img.setRGB(x3, y3, (new Color(0,0,255)).getRGB());
+       
 
     }
 

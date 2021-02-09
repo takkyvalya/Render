@@ -1,42 +1,120 @@
 package com.valya;
 
 
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.Buffer;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Render {
 
     public static void render(BufferedImage img) {
-         // Рисуется снежинка
-        /*
-        int A=400;
-        int B=300;
-        int R=100;
-        for (int i=1;i<17;i++){
-            int x=(int)(A + R*Math.cos((Math.PI / 8) * i));
-            int y=(int)(B + R * Math.sin((Math.PI / 8 )* i));
-            //System.out.println(x + " " + y);
-            Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
-        }
-        */
-        //Рисуется многоугльник
         double A=400;
         double B=300;
         double R=100;
-        for (double i=1;i<13;i++){
-            double x=(A + R * Math.cos((Math.PI / 6) * i));
-            double y=(B + R * Math.sin((Math.PI / 6 )* i));
-            double x2=(A + R * Math.cos((Math.PI / 6) * (i+1)) );
-            double y2=(B + R * Math.sin((Math.PI / 6 )* (i+1) ));
+        for (double i=0;i<16;i++){
+            double x=(A + R * Math.cos((Math.PI / 8) * i));
+            double y=(B + R * Math.sin((Math.PI / 8 )* i));
+            double x2=(A + R * Math.cos((Math.PI / 8) * (i+1)) );
+            double y2=(B + R * Math.sin((Math.PI / 8 )* (i+1) ));
             //System.out.println(x + " " + y);
-            Render.renderColorTriangle(img, A,B, x,y,x2,y2, new Color((int)i*20,0,0));
+            //Render.renderColorTriangle(img, A,B, x,y,x2,y2, new Color((int)i*10,0,0));
             //Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
             //Render.renderLine(img,A,B ,x2,y2,new Color(30,30,30));
         }
-        //Рисует треугольник с градиентом
-        //Render.renderGrColorTriangle(img,130,145,564,470,452,155);
+        Render.parseCoord();
+        Render.parseTriangle();
+        Render.renderFace(img);
 
+// img.setRGB(500, 300, new Color(255, 0, 200).getRGB());
+//        for (int i = 0; i < img.getWidth(); i++) {
+//            for (int j = 0; j < img.getHeight(); j++) {
+//                img.setRGB(i, j, new Color(i * j % 256, (i + j) % 256, (i * i + j * j) % 256).getRGB());
+//            }
+//        }
     }
+
+
+   static ArrayList<Vector3> listcoor = new ArrayList<>();
+   static ArrayList<Triangle>  listtrian= new ArrayList<>();
+
+    public static void parseCoord()  {
+        Scanner s = null;
+        try {
+            s = new Scanner(new File("/home/student/IdeaProjects/untitled20/","uaz.obj"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        listcoor.add(new Vector3(0,0,0));
+        for(int i = 0; i<=547;i++){
+            String next = s.nextLine();
+            if(next.startsWith("v ")){
+                double x;
+                double y;
+                double z;
+                 String var[] = next.split(" ");
+                 x = Double.parseDouble(var[1]);
+                 y = Double.parseDouble(var[2]);
+                 z = Double.parseDouble(var[3]);
+                 listcoor.add(new Vector3(x,y,z));
+            }
+        }
+     }
+
+    public static void parseTriangle ()  {
+        Scanner s = null;
+        try {
+            s = new Scanner(new File("/home/student/IdeaProjects/untitled20/","uaz.obj"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        while(s.hasNextLine()){
+            String next = s.nextLine();
+            if(next.startsWith("f ")){
+                double x1=0;
+                double y1=0;
+                double x2=0;
+                double y2=0;
+                double x3=0;
+                double y3=0;
+
+                String ss[] = next.split(" ");
+                for (int j = 1; j <4 ; j++) {
+                    String sd[] = ss[j].split("/");
+                    Vector3 xa = listcoor.get(Integer.parseInt(sd[0]));
+                    if (j==1){
+                        x1=xa.xV;
+                        y1=xa.yV;
+                    } else if (j==2){
+                        x2=xa.xV;
+                        y2=xa.yV;
+                    } else {
+                        x3=xa.xV;
+                        y3=xa.yV;
+                    }
+                }
+                listtrian.add(new Triangle(x1,y1,x2,y2,x3,y3));
+            }
+        }
+    }
+
+    public static void renderFace(BufferedImage img){
+        for (int i = 0; i <listtrian.size() ; i++) {
+
+            renderColorTriangle(img, listtrian.get(i).x1, listtrian.get(i).y1, listtrian.get(i).x2, listtrian.get(i).y2, listtrian.get(i).x3, listtrian.get(i).y3, new Color(122,122,122));
+        }
+    }
+
+
+
+
+
+
+
     public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3){
         for (int i = (int) Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
             for (int j = (int) Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
@@ -50,8 +128,8 @@ public class Render {
         }
     }
     public static void renderColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3, Color color){
-        for (int i = (int) Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
-            for (int j = (int) Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
+        for (int i = (int) Math.max(0,Math.min(x1, Math.min(x2, x3))); i <= Math.min(Main.w,Math.max(x1, Math.max(x2, x3))); i++) {
+            for (int j = (int) Math.max(0,Math.min(y1, Math.min(y2, y3))); j <= Math.min(Main.h, Math.max(y1, Math.max(y2, y3))); j++) {
                 //Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
                 double alpha= ((i-x1) * (y3-y1) - (x3-x1)* (j-y1)) /  ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
                 double beta=(double) ((x2-x1) * (j-y1) - (y2-y1) * (i-x1)) / ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
@@ -120,3 +198,5 @@ public class Render {
         }
     }
 }
+
+

@@ -1,5 +1,3 @@
-package com.valya;
-
 
 
 import java.awt.*;
@@ -15,20 +13,27 @@ public class Render {
     public static void render(BufferedImage img) {
         double A=400;
         double B=300;
-        double R=100;
+        double R=200;
         for (double i=0;i<16;i++){
-            double x=(A + R * Math.cos((Math.PI / 8) * i));
-            double y=(B + R * Math.sin((Math.PI / 8 )* i));
-            double x2=(A + R * Math.cos((Math.PI / 8) * (i+1)) );
-            double y2=(B + R * Math.sin((Math.PI / 8 )* (i+1) ));
-            //System.out.println(x + " " + y);
-            //Render.renderColorTriangle(img, A,B, x,y,x2,y2, new Color((int)i*10,0,0));
-            //Render.renderLine(img,A,B ,x,y,new Color(30,30,30));
-            //Render.renderLine(img,A,B ,x2,y2,new Color(30,30,30));
+            double x=(A + R * Math.cos((Math.PI / 4) * i));
+            double y=(B + R * Math.sin((Math.PI / 4)* i));
+            double x2=(A + R * Math.cos((Math.PI / 4) * (i+1)) );
+            double y2=(B + R * Math.sin((Math.PI / 4 )* (i+1) ));
+            //Render.renderGrColorTriangle(img, A,B, x,y,x2,y2);
         }
-        Render.parseCoord();
-        Render.parseTriangle();
-        Render.renderFace(img);
+        //Render.parseCoord();
+        //Render.parseTriangle();
+        //Render.renderFace(img);
+        Render.renderTriangle(img,25,26,237,174,103,500,new Color(255,0,0), new Color(0,255,0));
+        int[][] v1 = {{25}, {26}, {0}, {1}};
+        int[][] v2 = {{237}, {174}, {0}, {1}};
+        int[][] v3 = {{103}, {500}, {0}, {1}};
+        int[][] tm = Render.TMatrix(150, 200, 1);
+        int[][] out1 = Render.MatMult(tm, v1);
+        int[][] out2 = Render.MatMult(tm, v2);
+        int[][] out3 = Render.MatMult(tm, v3);
+        Render.renderTriangle(img,out1[0][0],out1[1][0],out2[0][0],out2[1][0],out3[0][0],out3[1][0],new Color(255,0,0), new Color(255,0,255));
+
 
 // img.setRGB(500, 300, new Color(255, 0, 200).getRGB());
 //        for (int i = 0; i < img.getWidth(); i++) {
@@ -41,6 +46,32 @@ public class Render {
 
    static ArrayList<Vector3> listcoor = new ArrayList<>();
    static ArrayList<Triangle>  listtrian= new ArrayList<>();
+
+
+
+   public static int[][] TMatrix(int vx, int vy, int vz)
+   {
+        int[][] out = {{1, 0, 0, vx}, {0, 1, 0, vy}, {0, 0, 1, vz}, {0, 0, 0, 1}};
+
+        return out;
+   }
+
+   public static int[][] MatMult(int[][] mat1, int[][] mat2)
+   {
+       int[][] out = new int[mat1.length][];
+       for (int i = 0; i < out.length; i++) {
+           out[i] = new int[mat2[0].length];
+           for (int j = 0; j < out[i].length; j++) {
+               int arg=0;
+               for (int k = 0; k < mat1[0].length; k++) {
+                   arg+=mat1[i][k] * mat2[k][j];
+               }
+               out[i][j]=arg;
+           }
+       }
+       return out;
+   }
+
 
     public static void parseCoord()  {
         Scanner s = null;
@@ -105,7 +136,7 @@ public class Render {
     public static void renderFace(BufferedImage img){
         for (int i = 0; i <listtrian.size() ; i++) {
 
-            renderColorTriangle(img, listtrian.get(i).x1, listtrian.get(i).y1, listtrian.get(i).x2, listtrian.get(i).y2, listtrian.get(i).x3, listtrian.get(i).y3, new Color(122,122,122));
+            renderColorTriangle(img, listtrian.get(i).x1, listtrian.get(i).y1, listtrian.get(i).x2, listtrian.get(i).y2, listtrian.get(i).x3, listtrian.get(i).y3, new Color(122,0,0));
         }
     }
 
@@ -198,5 +229,4 @@ public class Render {
         }
     }
 }
-
 

@@ -1,5 +1,5 @@
 
-
+//https://sites.google.com/site/novyisayt2/ - ХОРОШИЙ САЙТ 100% ЗАРАБОТОК||ИНВЕСТИЦИИ ЭТО ВЫГОДНО!!!
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -24,15 +24,32 @@ public class Render {
         //Render.parseCoord();
         //Render.parseTriangle();
         //Render.renderFace(img);
-        Render.renderTriangle(img,25,26,237,174,103,500,new Color(255,0,0), new Color(0,255,0));
-        int[][] v1 = {{25}, {26}, {0}, {1}};
-        int[][] v2 = {{237}, {174}, {0}, {1}};
-        int[][] v3 = {{103}, {500}, {0}, {1}};
-        int[][] tm = Render.TMatrix(150, 200, 1);
-        int[][] out1 = Render.MatMult(tm, v1);
-        int[][] out2 = Render.MatMult(tm, v2);
-        int[][] out3 = Render.MatMult(tm, v3);
-        Render.renderTriangle(img,out1[0][0],out1[1][0],out2[0][0],out2[1][0],out3[0][0],out3[1][0],new Color(255,0,0), new Color(255,0,255));
+        Render.renderTriangle(img,200,200,300,200,250,250,new Color(255,0,0), new Color(0,255,0));
+        int[][] v1 = {{200}, {200}, {1}, {1}};
+        int[][] v2 = {{300}, {200}, {1}, {1}};
+        int[][] v3 = {{250}, {250}, {1}, {1}};
+        int[][] tm = Render.TMatrix(350, 350, 1);
+        int[][] rm = Render.RzMatrix(Math.PI);
+
+        int[][] sm = Render.SMatrix(3, 3, 1);
+
+        int[][] out4 = Render.MatMult(rm, v1);
+        int[][] out5 = Render.MatMult(rm, v2);
+        int[][] out6 = Render.MatMult(rm, v3);
+
+        int[][] out1 = Render.MatMult(tm, out4);
+        int[][] out2 = Render.MatMult(tm, out5);
+        int[][] out3 = Render.MatMult(tm, out6);
+
+        int[][] out7 = Render.MatMult(sm, out1);
+        int[][] out8 = Render.MatMult(sm, out2);
+        int[][] out9 = Render.MatMult(sm, out3);
+
+
+
+        //System.out.println(out4[0][0] +" " + out4[1][0] + " " + out5[0][0] + " " + out5[1][0] + " " + out6[0][0] +" "+ out6[1][0]);
+        //Render.renderTriangle(img,out1[0][0],out1[1][0],out2[0][0],out2[1][0],out3[0][0],out3[1][0],new Color(255,0,0), new Color(255,0,255));
+        Render.renderTriangle(img,out7[0][0],out7[1][0],out8[0][0],out8[1][0],out9[0][0],out9[1][0],new Color(255,0,0), new Color(255,0,255));
 
 
 // img.setRGB(500, 300, new Color(255, 0, 200).getRGB());
@@ -54,6 +71,49 @@ public class Render {
         int[][] out = {{1, 0, 0, vx}, {0, 1, 0, vy}, {0, 0, 1, vz}, {0, 0, 0, 1}};
 
         return out;
+   }
+
+    public static int[][] RxMatrix (double phi)
+    {
+        int[][] out = {{1, 0, 0, 0}, {0, (int)Math.cos(phi), -1*(int)Math.sin(phi), 0}, {0, (int)Math.sin(phi), (int)Math.cos(phi), 0}, {0, 0, 0, 1}};
+
+        return out;
+    }
+
+    public static int[][] RyMatrix (double phi)
+    {
+        int[][] out = {{(int)Math.cos(phi), 0,(int)(Math.sin(phi)), 0}, {0, 1, 0, 0}, {-1*(int)(Math.sin(phi)), 0, (int)Math.cos(phi), 0}, {0, 0, 0, 1}};
+
+        return out;
+    }
+
+   public static int[][] RzMatrix (double phi)
+   {
+       int[][] out = {{(int)Math.cos(phi), -1*(int)(Math.sin(phi)), 0, 0}, {(int)Math.sin(phi), (int)Math.cos(phi), 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+
+       return out;
+   }
+
+
+
+   public static int[][] RMatrix3D (double ax, double ay, double az)
+   {
+       int[][] out = MatMult(MatMult(RxMatrix(ax), RyMatrix(ay)), RzMatrix(az));
+
+       return out;
+   }
+
+   public static int[][] SMatrix (int vx, int vy, int vz)
+   {
+       int[][] out = {{vx, 0, 0, 0}, {0, vy, 0, 0}, {0, 0, vz, 0}, {0, 0, 0, 1}};
+       return out;
+   }
+
+   public static int[][] TRSMatrix (int[][] tv, int[][] sv, double xangle, double yangle, double zangle, int[][] input)
+   {
+       int[][] out = MatMult(TMatrix(tv[0][0], tv[1][0], tv[2][0]), MatMult(RMatrix3D(xangle, yangle, zangle), MatMult(SMatrix(sv[0][0], sv[1][0], sv[2][0]), input)));
+
+       return out;
    }
 
    public static int[][] MatMult(int[][] mat1, int[][] mat2)

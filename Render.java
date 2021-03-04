@@ -24,113 +24,28 @@ public class Render {
         //Render.parseCoord();
         //Render.parseTriangle();
         //Render.renderFace(img);
-        Render.renderTriangle(img,200,200,300,200,250,250,new Color(255,0,0), new Color(0,255,0));
-        int[][] v1 = {{200}, {200}, {1}, {1}};
-        int[][] v2 = {{300}, {200}, {1}, {1}};
-        int[][] v3 = {{250}, {250}, {1}, {1}};
-        int[][] tm = Render.TMatrix(350, 350, 1);
-        int[][] rm = Render.RzMatrix(Math.PI);
+        Matrix v1=new Matrix(new int[][]{{200}, {200}, {1}, {1}});
+        Matrix v2=new Matrix(new int[][]{{300}, {200}, {1}, {1}});
+        Matrix v3=new Matrix(new int[][]{{250}, {250}, {1}, {1}});
+        Matrix tv=new Matrix(new int[][]{{1000}, {1000}, {0}, {1}});
+        Matrix sv=new Matrix(new int[][]{{2}, {2}, {1}, {1}});
 
-        int[][] sm = Render.SMatrix(3, 3, 1);
+        Matrix rm = Matrix.RzMatrix(Math.PI);
 
-        int[][] out4 = Render.MatMult(rm, v1);
-        int[][] out5 = Render.MatMult(rm, v2);
-        int[][] out6 = Render.MatMult(rm, v3);
+        Matrix sm = Matrix.SMatrix(3, 3, 1);
 
-        int[][] out1 = Render.MatMult(tm, out4);
-        int[][] out2 = Render.MatMult(tm, out5);
-        int[][] out3 = Render.MatMult(tm, out6);
-
-        int[][] out7 = Render.MatMult(sm, out1);
-        int[][] out8 = Render.MatMult(sm, out2);
-        int[][] out9 = Render.MatMult(sm, out3);
-
-
-
-        //System.out.println(out4[0][0] +" " + out4[1][0] + " " + out5[0][0] + " " + out5[1][0] + " " + out6[0][0] +" "+ out6[1][0]);
-        //Render.renderTriangle(img,out1[0][0],out1[1][0],out2[0][0],out2[1][0],out3[0][0],out3[1][0],new Color(255,0,0), new Color(255,0,255));
-        Render.renderTriangle(img,out7[0][0],out7[1][0],out8[0][0],out8[1][0],out9[0][0],out9[1][0],new Color(255,0,0), new Color(255,0,255));
-
-
-// img.setRGB(500, 300, new Color(255, 0, 200).getRGB());
-//        for (int i = 0; i < img.getWidth(); i++) {
-//            for (int j = 0; j < img.getHeight(); j++) {
-//                img.setRGB(i, j, new Color(i * j % 256, (i + j) % 256, (i * i + j * j) % 256).getRGB());
-//            }
-//        }
+        Matrix exit1 = Matrix.TRSMatrix(tv, sv, 0, 0, Math.PI, v1);
+        Matrix exit2 = Matrix.TRSMatrix(tv, sv, 0, 0, Math.PI, v2);
+        Matrix exit3 = Matrix.TRSMatrix(tv, sv, 0, 0, Math.PI, v3);
+        Render.renderColorTriangle(img,exit1.value[0][0], exit1.value[1][0], exit2.value[0][0], exit2.value[1][0], exit3.value[0][0], exit3.value[1][0], new Color(233,49, 100));
+        //System.out.println(exit1[0][0]+ " " +exit1[1][0]+ " " + exit2[0][0]+ " " +exit2[1][0]+ " " +exit3[0][0]+ " " +exit3[1][0]);
     }
 
 
-   static ArrayList<Vector3> listcoor = new ArrayList<>();
-   static ArrayList<Triangle>  listtrian= new ArrayList<>();
+    static ArrayList<Vector3> listcoor = new ArrayList<>();
+    static ArrayList<Triangle>  listtrian= new ArrayList<>();
 
 
-
-   public static int[][] TMatrix(int vx, int vy, int vz)
-   {
-        int[][] out = {{1, 0, 0, vx}, {0, 1, 0, vy}, {0, 0, 1, vz}, {0, 0, 0, 1}};
-
-        return out;
-   }
-
-    public static int[][] RxMatrix (double phi)
-    {
-        int[][] out = {{1, 0, 0, 0}, {0, (int)Math.cos(phi), -1*(int)Math.sin(phi), 0}, {0, (int)Math.sin(phi), (int)Math.cos(phi), 0}, {0, 0, 0, 1}};
-
-        return out;
-    }
-
-    public static int[][] RyMatrix (double phi)
-    {
-        int[][] out = {{(int)Math.cos(phi), 0,(int)(Math.sin(phi)), 0}, {0, 1, 0, 0}, {-1*(int)(Math.sin(phi)), 0, (int)Math.cos(phi), 0}, {0, 0, 0, 1}};
-
-        return out;
-    }
-
-   public static int[][] RzMatrix (double phi)
-   {
-       int[][] out = {{(int)Math.cos(phi), -1*(int)(Math.sin(phi)), 0, 0}, {(int)Math.sin(phi), (int)Math.cos(phi), 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
-
-       return out;
-   }
-
-
-
-   public static int[][] RMatrix3D (double ax, double ay, double az)
-   {
-       int[][] out = MatMult(MatMult(RxMatrix(ax), RyMatrix(ay)), RzMatrix(az));
-
-       return out;
-   }
-
-   public static int[][] SMatrix (int vx, int vy, int vz)
-   {
-       int[][] out = {{vx, 0, 0, 0}, {0, vy, 0, 0}, {0, 0, vz, 0}, {0, 0, 0, 1}};
-       return out;
-   }
-
-   public static int[][] TRSMatrix (int[][] tv, int[][] sv, double xangle, double yangle, double zangle, int[][] input)
-   {
-       int[][] out = MatMult(TMatrix(tv[0][0], tv[1][0], tv[2][0]), MatMult(RMatrix3D(xangle, yangle, zangle), MatMult(SMatrix(sv[0][0], sv[1][0], sv[2][0]), input)));
-
-       return out;
-   }
-
-   public static int[][] MatMult(int[][] mat1, int[][] mat2)
-   {
-       int[][] out = new int[mat1.length][];
-       for (int i = 0; i < out.length; i++) {
-           out[i] = new int[mat2[0].length];
-           for (int j = 0; j < out[i].length; j++) {
-               int arg=0;
-               for (int k = 0; k < mat1[0].length; k++) {
-                   arg+=mat1[i][k] * mat2[k][j];
-               }
-               out[i][j]=arg;
-           }
-       }
-       return out;
-   }
 
 
     public static void parseCoord()  {
@@ -147,14 +62,14 @@ public class Render {
                 double x;
                 double y;
                 double z;
-                 String var[] = next.split(" ");
-                 x = Double.parseDouble(var[1]);
-                 y = Double.parseDouble(var[2]);
-                 z = Double.parseDouble(var[3]);
-                 listcoor.add(new Vector3(x,y,z));
+                String var[] = next.split(" ");
+                x = Double.parseDouble(var[1]);
+                y = Double.parseDouble(var[2]);
+                z = Double.parseDouble(var[3]);
+                listcoor.add(new Vector3(x,y,z));
             }
         }
-     }
+    }
 
     public static void parseTriangle ()  {
         Scanner s = null;
@@ -200,12 +115,6 @@ public class Render {
         }
     }
 
-
-
-
-
-
-
     public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3){
         for (int i = (int) Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
             for (int j = (int) Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
@@ -218,6 +127,7 @@ public class Render {
             }
         }
     }
+
     public static void renderColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3, Color color){
         for (int i = (int) Math.max(0,Math.min(x1, Math.min(x2, x3))); i <= Math.min(Main.w,Math.max(x1, Math.max(x2, x3))); i++) {
             for (int j = (int) Math.max(0,Math.min(y1, Math.min(y2, y3))); j <= Math.min(Main.h, Math.max(y1, Math.max(y2, y3))); j++) {
@@ -230,7 +140,6 @@ public class Render {
             }
         }
     }
-
 
     public static void renderTriangle(BufferedImage img, int x1, int y1, int x2, int y2, int x3,  int y3, Color color, Color color2){
         for (int i = Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
@@ -247,9 +156,6 @@ public class Render {
         img.setRGB(x3, y3, color.getRGB());
 
     }
-
-
-
 
     public static void renderLine(BufferedImage img, int x1, int y1, int x2, int y2, Color color) {
         img.setRGB(x1,y1,color.getRGB());

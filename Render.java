@@ -1,5 +1,3 @@
-
-//https://sites.google.com/site/novyisayt2/ - ХОРОШИЙ САЙТ 100% ЗАРАБОТОК||ИНВЕСТИЦИИ ЭТО ВЫГОДНО!!!
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,9 +19,9 @@ public class Render {
             double y2=(B + R * Math.sin((Math.PI / 4 )* (i+1) ));
             //Render.renderGrColorTriangle(img, A,B, x,y,x2,y2);
         }
-        //Render.parseCoord();
-        //Render.parseTriangle();
-        //Render.renderFace(img);
+        Render.parseCoord();
+        Render.parseTriangle();
+        Render.renderFace(img, new Vector3(525,251,90));
         Matrix v1=new Matrix(new int[][]{{200}, {200}, {1}, {1}});
         Matrix v2=new Matrix(new int[][]{{300}, {200}, {1}, {1}});
         Matrix v3=new Matrix(new int[][]{{250}, {250}, {1}, {1}});
@@ -37,14 +35,12 @@ public class Render {
         Matrix exit1 = Matrix.TRSMatrix(tv, sv, 0, 0, Math.PI, v1);
         Matrix exit2 = Matrix.TRSMatrix(tv, sv, 0, 0, Math.PI, v2);
         Matrix exit3 = Matrix.TRSMatrix(tv, sv, 0, 0, Math.PI, v3);
-        Render.renderColorTriangle(img,exit1.value[0][0], exit1.value[1][0], exit2.value[0][0], exit2.value[1][0], exit3.value[0][0], exit3.value[1][0], new Color(233,49, 100));
-        //System.out.println(exit1[0][0]+ " " +exit1[1][0]+ " " + exit2[0][0]+ " " +exit2[1][0]+ " " +exit3[0][0]+ " " +exit3[1][0]);
+        //Render.renderColorTriangle(img,exit1.value[0][0], exit1.value[1][0], exit2.value[0][0], exit2.value[1][0], exit3.value[0][0], exit3.value[1][0], new Color(233,49, 100));
     }
 
 
     static ArrayList<Vector3> listcoor = new ArrayList<>();
     static ArrayList<Triangle>  listtrian= new ArrayList<>();
-
 
 
 
@@ -87,6 +83,9 @@ public class Render {
                 double y2=0;
                 double x3=0;
                 double y3=0;
+                double z1=0;
+                double z2=0;
+                double z3=0;
 
                 String ss[] = next.split(" ");
                 for (int j = 1; j <4 ; j++) {
@@ -95,27 +94,35 @@ public class Render {
                     if (j==1){
                         x1=xa.xV;
                         y1=xa.yV;
+                        z1 = xa.zV;
                     } else if (j==2){
                         x2=xa.xV;
                         y2=xa.yV;
+                        z2 = xa.zV;
                     } else {
                         x3=xa.xV;
                         y3=xa.yV;
+                        z3 = xa.zV;
                     }
                 }
-                listtrian.add(new Triangle(x1,y1,x2,y2,x3,y3));
+                listtrian.add(new Triangle(x1,y1,z1,x2,y2,z2,x3,y3,z3));
             }
         }
     }
 
-    public static void renderFace(BufferedImage img){
+    public static void renderFace(BufferedImage img, Vector3 sveta){
         for (int i = 0; i <listtrian.size() ; i++) {
+            if(listtrian.get(i).norm().angle(sveta) <=0){
+                continue;
+            }else{
+                renderColorTriangle(img, listtrian.get(i).x1, listtrian.get(i).y1, listtrian.get(i).x2, listtrian.get(i).y2, listtrian.get(i).x3, listtrian.get(i).y3,
+                        new Color((int) (122*listtrian.get(i).norm().angle(sveta)),(int) (122*listtrian.get(i).norm().angle(sveta)), (int) listtrian.get(i).norm().angle(sveta)));
+            }
 
-            renderColorTriangle(img, listtrian.get(i).x1, listtrian.get(i).y1, listtrian.get(i).x2, listtrian.get(i).y2, listtrian.get(i).x3, listtrian.get(i).y3, new Color(122,0,0));
         }
     }
 
-    public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3){
+    public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3, double koeff){
         for (int i = (int) Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
             for (int j = (int) Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
                 //Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
@@ -195,4 +202,3 @@ public class Render {
         }
     }
 }
-

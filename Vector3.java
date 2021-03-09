@@ -9,6 +9,20 @@ public class Vector3 {
         this.zV = zV;
     }
 
+    public double length (){
+        return Math.sqrt(xV*xV+yV*yV+zV*zV);
+    }
+
+    public double  scal(Vector3 oth){
+        return this.xV*oth.xV+this.yV*oth.yV+this.zV*oth.zV;
+    }
+
+    public double angle(Vector3 oth){
+        return scal(oth)/(this.length()*oth.length());
+    }
+
+
+
 
 
 }

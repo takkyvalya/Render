@@ -36,18 +36,18 @@ public class Render {
         Matrix exit2 = Matrix.TRSMatrix(tv, sv, 0, 0, Math.PI, v2);
         Matrix exit3 = Matrix.TRSMatrix(tv, sv, 0, 0, Math.PI, v3);
         //Render.renderColorTriangle(img,exit1.value[0][0], exit1.value[1][0], exit2.value[0][0], exit2.value[1][0], exit3.value[0][0], exit3.value[1][0], new Color(233,49, 100));
+    screen = new int[Main.w][Main.h];
     }
 
 
     static ArrayList<Vector3> listcoor = new ArrayList<>();
     static ArrayList<Triangle>  listtrian= new ArrayList<>();
-
-
+    static int[][] screen=new int[Main.w][Main.h];
 
     public static void parseCoord()  {
         Scanner s = null;
         try {
-            s = new Scanner(new File("/home/student/IdeaProjects/untitled20/","uaz.obj"));
+            s = new Scanner(new File("/home/student/IdeaProjects/untitled13","uaz.obj"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -70,7 +70,7 @@ public class Render {
     public static void parseTriangle ()  {
         Scanner s = null;
         try {
-            s = new Scanner(new File("/home/student/IdeaProjects/untitled20/","uaz.obj"));
+            s = new Scanner(new File("/home/student/IdeaProjects/untitled13","uaz.obj"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -115,14 +115,35 @@ public class Render {
             if(listtrian.get(i).norm().angle(sveta) <=0){
                 continue;
             }else{
-                renderColorTriangle(img, listtrian.get(i).x1, listtrian.get(i).y1, listtrian.get(i).x2, listtrian.get(i).y2, listtrian.get(i).x3, listtrian.get(i).y3,
-                        new Color((int) (122*listtrian.get(i).norm().angle(sveta)),(int) (122*listtrian.get(i).norm().angle(sveta)), (int) listtrian.get(i).norm().angle(sveta)));
+                renderColorTriangleForFace(img, listtrian.get(i).x1, listtrian.get(i).y1, listtrian.get(i).z1,
+                        listtrian.get(i).x2, listtrian.get(i).y2, listtrian.get(i).z2, listtrian.get(i).x3, listtrian.get(i).y3, listtrian.get(i).z3,
+                        new Color((int) (122*listtrian.get(i).norm().angle(sveta)),(int) (122*listtrian.get(i).norm().angle(sveta)), (int) listtrian.get(i).norm().angle(sveta))
+                        //new Color(13,0,126)
+                );
             }
 
         }
     }
 
-    public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3, double koeff){
+    public static void renderColorTriangleForFace(BufferedImage img, double x1, double y1, double z1, double x2, double y2,double z2, double x3, double y3, double z3, Color color){
+        for (int i = (int) Math.max(0,Math.min(x1, Math.min(x2, x3))); i <= Math.min(Main.w,Math.max(x1, Math.max(x2, x3))); i++) {
+            for (int j = (int) Math.max(0,Math.min(y1, Math.min(y2, y3))); j <= Math.min(Main.h, Math.max(y1, Math.max(y2, y3))); j++) {
+                //Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
+                double alpha= ((i-x1) * (y3-y1) - (x3-x1)* (j-y1)) /  ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
+                double beta=(double) ((x2-x1) * (j-y1) - (y2-y1) * (i-x1)) / ((x2-x1) * (y3-y1)-(x3-x1)*(y2-y1));
+                if(alpha>=0 && beta>=0 && beta+alpha<=1){
+                    if(screen[i][j]<(int)
+                            (z1*alpha+z2*beta+z3*(1-alpha-beta))){
+                        screen[i][j]=(int)(z1*alpha+z2*beta+z3*(1-alpha-beta));
+                        img.setRGB((int)i,(int) j, color.getRGB());
+                    }
+                    //img.setRGB((int)i,(int) j,color.getRGB());
+                }
+            }
+        }
+    }
+
+    public static void renderGrColorTriangle(BufferedImage img, double x1, double y1, double x2, double y2, double x3, double y3){
         for (int i = (int) Math.min(x1, Math.min(x2, x3)); i <= Math.max(x1, Math.max(x2, x3)); i++) {
             for (int j = (int) Math.min(y1, Math.min(y2, y3)); j <= Math.max(y1, Math.max(y2, y3)); j++) {
                 //Color r=new Color(255-Math.abs(i-x1),255-Math.abs(i-x2), 255-Math.abs(i-x3));
